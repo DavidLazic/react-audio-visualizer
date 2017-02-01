@@ -18,7 +18,6 @@ body {
 
 .visualizer {
     position: relative;
-    // height: 100vh;
     width: 100%;
     background: -webkit-gradient(radial, center center, 0, center center, 460, from(#396362), to(#000000));
     background: -webkit-radial-gradient(circle, #396362, #000000);
@@ -27,19 +26,20 @@ body {
     box-shadow: inset 0 0 160px 0 #000;
     cursor: pointer;
 
+    &--grayscale {
+        background: -webkit-gradient(radial, center center, 0, center center, 460, from(#c6c6c6), to(#000000));
+        background: -webkit-radial-gradient(circle, #c6c6c6, #000000);
+        background: -moz-radial-gradient(circle, #c6c6c6, #000000);
+        background: -ms-radial-gradient(circle, #c6c6c6, #000000);
+        box-shadow: inset 0 0 150px 0 #000;
+    }
+
     &__canvas-wrapper {
-        // position: absolute;
-        // top: 50%;
-        // left: 50%;
-        // transform: translate(-50%, -50%);
-        // height: initial;
-        // width: initial;
-        // background: transparent;
-        // box-shadow: none;
+
     }
 
     &__canvas {
-        width: 100%;
+
     }
 }
 

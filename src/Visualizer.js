@@ -1,5 +1,12 @@
 import React, { PropTypes } from 'react';
 
+const STATES = [
+    'ENDED',
+    'PLAYING',
+    'PAUSED',
+    'BUFFERING'
+];
+
 const OPTIONS_ANALYSER = {
     smoothingTime: 0.6,
     fftSize: 512
@@ -7,19 +14,18 @@ const OPTIONS_ANALYSER = {
 
 const OPTIONS_DEFAULT = {
     autoplay: false,
-    loop: false,
     shadowBlur: 20,
     shadowColor: '#ffffff',
     barColor: '#cafdff',
     barWidth: 2,
     barHeight: 2,
     barSpacing: 7,
-    font: ['12px', 'Helvetica'],
-    style: 'lounge'
+    font: ['12px', 'Helvetica']
 };
 
 const Visualizer = React.createClass({
     requestAnimationFrame: null,
+    animFrameId: null,
     ctx: null,
     analyser: null,
     frequencyData: 0,
@@ -31,9 +37,7 @@ const Visualizer = React.createClass({
     minutes: '00',
     seconds: '00',
     options: OPTIONS_DEFAULT,
-    styleTypes: {
-        lounge: '_renderLounge'
-    },
+    onRender: null,
 
     getInitialState () {
         return {
@@ -54,7 +58,7 @@ const Visualizer = React.createClass({
             }).then(() => {
                 this._setRequestionAnimationFrame();
             }).catch((error) => {
-                this._displayError(error);
+                this._onDisplayError(error);
             });
     },
 
@@ -63,9 +67,9 @@ const Visualizer = React.createClass({
             .then(() => {
                 this._setCanvasStyles();
             }).then(() => {
-                this.options.autoplay && this._resolvePlayState();
+                this.options.autoplay && this._onResolvePlayState();
             }).catch((error) => {
-                this._displayError(error);
+                this._onDisplayError(error);
             });
     },
 
@@ -77,7 +81,7 @@ const Visualizer = React.createClass({
      * @return {Function}
      * @private
      */
-    _displayError (error) {
+    _onDisplayError (error) {
         return window.console.error(error);
     },
 
@@ -91,6 +95,10 @@ const Visualizer = React.createClass({
     _extend () {
         return new Promise((resolve, reject) => {
             Object.assign(this.options, this.props.options);
+            Object.assign(this, {
+                onRender: this.props.onRender || this._onRenderDefault
+            });
+
             return resolve();
         });
     },
@@ -180,20 +188,22 @@ const Visualizer = React.createClass({
      */
     _setBufferSourceNode () {
         const { ctx, analyser } = this;
-        const { loop } = this.options;
 
         return new Promise((resolve, reject) => {
             let sourceNode = ctx.createBufferSource();
 
-            Object.assign(sourceNode, { loop });
             sourceNode.connect(analyser);
             sourceNode.connect(ctx.destination);
             sourceNode.onended = () => {
                 this.setState({ playing: false }, () => {
                     clearInterval(this.interval);
                     this.sourceNode.disconnect();
-                    this.resetTimer();
-                    this.sourceNode = ctx.createBufferSource();
+                    window.cancelAnimationFrame(this.animFrameId);
+                    Object.assign(this, { animFrameId: null });
+                    this._onChange(STATES[0]);
+
+                    this._onResetTimer();
+                    this._setBufferSourceNode();
                 });
             };
 
@@ -238,16 +248,28 @@ const Visualizer = React.createClass({
         let gradient = canvasCtx.createLinearGradient(0, 0, 0, 300);
         gradient.addColorStop(1, barColor);
 
-        const canvasStyle = {
+        Object.assign(this, { gradient });
+        Object.assign(this.canvasCtx, {
             fillStyle: gradient,
             shadowBlur: shadowBlur,
             shadowColor: shadowColor,
             font: font.join(' '),
             textAlign: 'center'
-        };
+        });
+    },
 
-        Object.assign(this, { gradient });
-        Object.assign(this.canvasCtx, canvasStyle);
+    /**
+     * @description
+     * On playstate change.
+     *
+     * @param {String} state
+     * @return {Function<Object>}
+     * @private
+     */
+    _onChange (state) {
+        const { onChange } = this.props;
+
+        return onChange && onChange.call(this, { status: state });
     },
 
     /**
@@ -257,15 +279,15 @@ const Visualizer = React.createClass({
      * @return {Function}
      * @private
      */
-    _resolvePlayState () {
+    _onResolvePlayState () {
         const { ctx } = this;
 
         if (!this.state.playing) {
             return (ctx.state === 'suspended') ?
-                this._audioPlay() :
-                this._audioLoad();
+                this._onAudioPlay() :
+                this._onAudioLoad();
         } else {
-            return this._audioPause();
+            return this._onAudioPause();
         }
     },
 
@@ -276,27 +298,45 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _audioLoad () {
+    _onAudioLoad () {
         const { ctx } = this;
-        const { model } = this.props;
         const { canvas } = this.refs;
 
         this.canvasCtx.fillText('Loading...', canvas.width / 2, canvas.height / 2);
+        this._onChange(STATES[3]);
 
-        let req = new XMLHttpRequest();
-        req.open('GET', model.path, true);
-        req.responseType = 'arraybuffer';
-
-        req.onload = () => {
-            ctx.decodeAudioData(req.response, (buffer) => {
-                this._audioPlay(buffer);
+        this._httpGet().then((response) => {
+            ctx.decodeAudioData(response, (buffer) => {
+                this._onAudioPlay(buffer);
             }, (error) => {
-                this._displayError(error);
+                this._onDisplayError(error);
             });
-        };
+        });
 
-        req.send();
         return this;
+    },
+
+    /**
+     * @description
+     * Http GET method.
+     *
+     * @return {Object}
+     * @private
+     */
+    _httpGet () {
+        const { model } = this.props;
+
+        return new Promise((resolve, reject) => {
+            let req = new XMLHttpRequest();
+            req.open('GET', model.path, true);
+            req.responseType = 'arraybuffer';
+
+            req.onload = () => {
+                return resolve(req.response);
+            };
+
+            req.send();
+        });
     },
 
     /**
@@ -306,9 +346,10 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _audioPause () {
+    _onAudioPause () {
         this.setState({ playing: false }, () => {
             this.ctx.suspend();
+            this._onChange(STATES[2]);
         });
 
         return this;
@@ -321,20 +362,23 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _audioPlay (buffer) {
+    _onAudioPlay (buffer) {
         const { ctx, sourceNode } = this;
 
         this.setState({ playing: true }, () => {
+            this._onChange(STATES[1]);
+
             if (ctx.state === 'suspended') {
-                return ctx.resume();
+                ctx.resume();
+                return this._onRenderFrame();
             }
 
             sourceNode.buffer = buffer;
             sourceNode.start(0);
             this
-                ._resetTimer()
-                ._startTimer()
-                ._renderFrame();
+                ._onResetTimer()
+                ._onStartTimer()
+                ._onRenderFrame();
         });
 
         return this;
@@ -347,7 +391,7 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _resetTimer () {
+    _onResetTimer () {
         Object.assign(this, { duration: (new Date(0, 0)).getTime() });
         return this;
     },
@@ -359,7 +403,7 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _startTimer () {
+    _onStartTimer () {
         this.interval = setInterval(() => {
             if (this.state.playing) {
                 let now = new Date(this.duration);
@@ -383,18 +427,21 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _renderFrame () {
+    _onRenderFrame () {
         const { analyser, frequencyData, canvasCtx, requestAnimationFrame } = this;
         const { canvas } = this.refs;
 
-        requestAnimationFrame(this._renderFrame);
-        analyser.getByteFrequencyData(frequencyData);
+        if (this.state.playing) {
+            this.animFrameId = requestAnimationFrame(this._onRenderFrame);
+            analyser.getByteFrequencyData(frequencyData);
 
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
 
-        this._renderTime()
-            ._renderText()
-            ._renderByStyleType();
+            this._onRenderTime()
+                ._onRenderText()
+                ._onRenderStyle();
+
+        }
 
         return this;
     },
@@ -406,7 +453,7 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _renderTime () {
+    _onRenderTime () {
         const { canvasCtx } = this;
         const { canvas } = this.refs;
 
@@ -422,7 +469,7 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _renderText () {
+    _onRenderText () {
         const { canvasCtx } = this;
         const { canvas } = this.refs;
         const { model } = this.props;
@@ -445,16 +492,15 @@ const Visualizer = React.createClass({
 
     /**
      * @description
-     * Render frame by style type.
+     * Render frame by current style.
      *
      * @return {Function}
      * @private
      */
-    _renderByStyleType () {
-        const { styleTypes } = this;
-        const { style } = this.options;
+    _onRenderStyle () {
+        const { onRender } = this;
 
-        return styleTypes[style] && this[styleTypes[style]].call(this, null);
+        return onRender && onRender.call(this, this);
     },
 
     /**
@@ -465,7 +511,7 @@ const Visualizer = React.createClass({
      * @return {Object}
      * @private
      */
-    _renderLounge () {
+    _onRenderDefault () {
         const { frequencyData, canvasCtx } = this;
         const { canvas } = this.refs;
         const { barWidth, barHeight, barSpacing } = this.options;
@@ -506,14 +552,13 @@ const Visualizer = React.createClass({
      */
     render () {
         const { model, width, height } = this.props;
+        const classes = ['visualizer', this.props.className].join(' ');
 
         return (
-            <div className="visualizer" onClick={ this._resolvePlayState }>
+            <div className={ classes } onClick={ this._onResolvePlayState }>
                 <audio
                     className="visualizer__audio"
-                    src={ model.path }
-                    data-author={ model.author }
-                    data-title={ model.title }>
+                    src={ model.path }>
                 </audio>
 
                 <div className="visualizer__canvas-wrapper">
@@ -532,6 +577,9 @@ const Visualizer = React.createClass({
 Visualizer.PropTypes = {
     model: PropTypes.object.isRequired,
     options: PropTypes.object,
+    className: PropTypes.string,
+    onRender: PropTypes.func,
+    onChange: PropTypes.func,
     width: PropTypes.string,
     height: PropTypes.string
 };

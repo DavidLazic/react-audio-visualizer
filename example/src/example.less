@@ -1,19 +1,11 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-}
-
-.vz-source {
-    position: absolute;
-    display: inline-block;
-    top: 20px;
-    left: 20px;
-    z-index: 1;
+    background: #000;
     color: #fff;
-    text-decoration: none;
-}
-
-.vz-source:hover {
-    color: #444;
 }
 
 .visualizer {
@@ -39,7 +31,25 @@ body {
     }
 
     &__canvas {
+        display: block;
+        margin: 0 auto;
+    }
+}
 
+ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    li {
+        transition: all 0.3s ease;
+        -webkit-transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+            text-shadow: -1px 1px 8px #337ab7, 1px -1px 8px #fff;
+        }
     }
 }
 

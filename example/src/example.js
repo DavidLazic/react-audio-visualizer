@@ -9,8 +9,7 @@ const DATA = [
             author: 'Galimatias & Joppe',
             title: 'Mintaka'
         },
-        options: { autoplay: false },
-        className: 'visualizer--grayscale'
+        options: { autoplay: false }
     },
     {
         model: {
@@ -19,6 +18,7 @@ const DATA = [
             title: 'Rain Beyond The Sun'
         },
         options: { autoplay: false },
+        className: 'visualizer--grayscale'
     }
 ];
 
@@ -32,9 +32,19 @@ const App = React.createClass({
         this.setState({ item });
     },
 
-    onRenderTest (context) {
-        // Render decorator
+    onRenderStyle (context) {
+        // Render style decorator
         // Write custom rendering style here if needed
+    },
+
+    onRenderText (context) {
+        // Render text decorator
+        // Write custom rendering text here if needed
+    },
+
+    onRenderTime (context) {
+        // Render time decorator
+        // Write custom rendering time here if needed
     },
 
     onPlayStateChange (state) {
@@ -67,8 +77,17 @@ const App = React.createClass({
         });
     },
 
+    getExtensions () {
+        return {
+            renderStyle: this.onRenderStyle,
+            renderText: this.onRenderText,
+            renderTime: this.onRenderTime
+        };
+    },
+
 	render () {
         const links = this.getLinks();
+        const extensions = this.getExtensions();
         const { item } = this.state;
 
         if (item) {
@@ -78,7 +97,7 @@ const App = React.createClass({
                         className={ item.className }
                         model={ item.model }
                         options={ item.options }
-                        onRender={ item.onRender }
+                        extensions={ extensions }
                         onChange={ this.onPlayStateChange }
                         width="800px"
                         height="400px" />
@@ -89,6 +108,14 @@ const App = React.createClass({
         } else {
             return (
     			<div className="main">
+                <Visualizer
+                    className={ DATA[0].className }
+                    model={ DATA[0].model }
+                    options={ DATA[0].options }
+                    onChange={ this.onPlayStateChange }
+                    width="800px"
+                    height="400px" />
+
                     <ul>{ links }</ul>
     			</div>
     		);

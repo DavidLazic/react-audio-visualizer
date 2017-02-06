@@ -8,6 +8,10 @@ body {
     color: #fff;
 }
 
+.main {
+    padding-top: 50px;
+}
+
 .visualizer {
     position: relative;
     width: 100%;
@@ -18,12 +22,8 @@ body {
     box-shadow: inset 0 0 160px 0 #000;
     cursor: pointer;
 
-    &--grayscale {
-        background: -webkit-gradient(radial, center center, 0, center center, 460, from(#c6c6c6), to(#000000));
-        background: -webkit-radial-gradient(circle, #c6c6c6, #000000);
-        background: -moz-radial-gradient(circle, #c6c6c6, #000000);
-        background: -ms-radial-gradient(circle, #c6c6c6, #000000);
-        box-shadow: inset 0 0 150px 0 #000;
+    &--custom-modifier {
+        // custom CSS modifier
     }
 
     &__canvas-wrapper {
@@ -38,17 +38,20 @@ body {
 
 ul {
     display: block;
-    margin: 0;
+    margin: 140px auto 0;
     padding: 0;
+    width: 400px;
     list-style-type: none;
+    background: darken(#396362, 20);
 
     li {
+        padding: 15px;
         transition: all 0.3s ease;
         -webkit-transition: all 0.3s ease;
         cursor: pointer;
 
         &:hover {
-            text-shadow: -1px 1px 8px #337ab7, 1px -1px 8px #fff;
+            background: darken(#396362, 5);
         }
     }
 }

@@ -17,15 +17,15 @@ const DATA = [
             author: 'NCT',
             title: 'Rain Beyond The Sun'
         },
-        options: { autoplay: false },
-        className: 'visualizer--grayscale'
+        options: { autoplay: true },
+        className: 'visualizer--custom-modifier'
     }
 ];
 
 const App = React.createClass({
 
     getInitialState () {
-        return { item: null };
+        return { item: DATA[0] };
     },
 
     onSelect (item) {
@@ -34,17 +34,17 @@ const App = React.createClass({
 
     onRenderStyle (context) {
         // Render style decorator
-        // Write custom rendering style here if needed
+        // Write custom rendering style here
     },
 
     onRenderText (context) {
         // Render text decorator
-        // Write custom rendering text here if needed
+        // Write custom rendering text here
     },
 
     onRenderTime (context) {
         // Render time decorator
-        // Write custom rendering time here if needed
+        // Write custom rendering time here
     },
 
     onPlayStateChange (state) {
@@ -70,8 +70,7 @@ const App = React.createClass({
         return DATA.map((item, index) => {
             return (
                 <li key={ index } onClick={ () => { this.onSelect(item); } }>
-                    <div>{ item.model.author }</div>
-                    <div>{ item.model.title }</div>
+                    <div>{ item.model.author } - { item.model.title }</div>
                 </li>
             );
         });
@@ -90,36 +89,19 @@ const App = React.createClass({
         const extensions = this.getExtensions();
         const { item } = this.state;
 
-        if (item) {
-            return (
-    			<div className="main">
-                    <Visualizer
-                        className={ item.className }
-                        model={ item.model }
-                        options={ item.options }
-                        extensions={ extensions }
-                        onChange={ this.onPlayStateChange }
-                        width="800px"
-                        height="400px" />
-
-                    <ul>{ links }</ul>
-    			</div>
-    		);
-        } else {
-            return (
-    			<div className="main">
+        return (
+			<div className="main">
                 <Visualizer
-                    className={ DATA[0].className }
-                    model={ DATA[0].model }
-                    options={ DATA[0].options }
+                    className={ item.className }
+                    model={ item.model }
+                    options={ item.options }
                     onChange={ this.onPlayStateChange }
                     width="800px"
                     height="400px" />
 
-                    <ul>{ links }</ul>
-    			</div>
-    		);
-        }
+                <ul>{ links }</ul>
+			</div>
+		);
 	}
 });
 

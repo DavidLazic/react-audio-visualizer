@@ -53,8 +53,6 @@ const Visualizer = React.createClass({
             }).then(() => {
                 this._setFrequencyData();
             }).then(() => {
-                this._setBufferSourceNode();
-            }).then(() => {
                 this._setRequestAnimationFrame();
             }).catch((error) => {
                 this._onDisplayError(error);
@@ -64,6 +62,8 @@ const Visualizer = React.createClass({
     componentDidMount () {
         this._extend()
             .then(() => {
+                this._setBufferSourceNode();
+            }).then(() => {
                 this._setCanvasContext();
             }).then(() => {
                 this._setCanvasStyles();
@@ -88,6 +88,12 @@ const Visualizer = React.createClass({
                 });
             });
         }
+    },
+
+    componentWillUnmount () {
+        const { ctx } = this.state;
+
+        ctx.close();
     },
 
     /**
@@ -330,7 +336,7 @@ const Visualizer = React.createClass({
      * @private
      */
     _onAudioLoad () {
-        const { ctx, canvasCtx } = this.state;
+        const { ctx, canvasCtx, model } = this.state;
         const { canvas } = this.refs;
 
         canvasCtx.fillText('Loading...', canvas.width / 2 + 10, canvas.height / 2 - 25);
@@ -338,7 +344,7 @@ const Visualizer = React.createClass({
 
         this._httpGet().then((response) => {
             ctx.decodeAudioData(response, (buffer) => {
-                this._onAudioPlay(buffer);
+                (model === this.state.model) && this._onAudioPlay(buffer);
             }, (error) => {
                 this._onDisplayError(error);
             });
@@ -381,8 +387,9 @@ const Visualizer = React.createClass({
         const { ctx } = this.state;
 
         this.setState({ playing: false }, () => {
-            ctx.suspend();
-            this._onChange(STATES[2]);
+            ctx.suspend().then(() => {
+                this._onChange(STATES[2]);
+            });
         });
 
         return this;
@@ -396,25 +403,27 @@ const Visualizer = React.createClass({
      * @private
      */
     _onAudioStop () {
-        const { canvasCtx } = this.state;
+        const { canvasCtx, ctx } = this.state;
         const { canvas } = this.refs;
 
-        window.cancelAnimationFrame(this.state.animFrameId);
-        clearInterval(this.state.interval);
-        this.state.sourceNode.disconnect();
-        canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-        this._onChange(STATES[0]);
-
-        this._onResetTimer().then(() => {
-            this._setBufferSourceNode();
-        });
-
         return new Promise((resolve, reject) => {
-            this.setState({
-                playing: false,
-                animFrameId: null
-            }, () => {
-                return resolve();
+            window.cancelAnimationFrame(this.state.animFrameId);
+            clearInterval(this.state.interval);
+            this.state.sourceNode.disconnect();
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+            this._onChange(STATES[0]);
+
+            this._onResetTimer().then(() => {
+                ctx.resume();
+            }).then(() => {
+                this._setBufferSourceNode();
+            }).then(() => {
+                this.setState({
+                    playing: false,
+                    animFrameId: null
+                }, () => {
+                    return resolve();
+                });
             });
         });
     },
@@ -511,9 +520,9 @@ const Visualizer = React.createClass({
 
         if (this.state.playing) {
             const animFrameId = requestAnimationFrame(this._onRenderFrame);
+
             this.setState({ animFrameId }, () => {
                 analyser.getByteFrequencyData(frequencyData);
-
                 this._onRender(this.state.extensions);
             });
         }
@@ -601,7 +610,7 @@ const Visualizer = React.createClass({
         const { barWidth, barHeight, barSpacing } = this.state.options;
 
         const radiusReduction = 70;
-        const amplitudeReduction = 6
+        const amplitudeReduction = 6;
 
         const cx = canvas.width / 2;
         const cy = canvas.height / 2;

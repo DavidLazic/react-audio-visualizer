@@ -1,7 +1,7 @@
 {
   "name": "react-audio-visualizer",
   "version": "1.0.0",
-  "description": "Visualizer",
+  "description": "Canvas audio visualization using Web Audio API",
   "main": "lib/Visualizer.js",
   "author": "David Lazic",
   "homepage": "https://github.com/DavidLazic/react-audio-visualizer",

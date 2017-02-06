@@ -30,7 +30,7 @@ npm install react-audio-visualizer --save
 
 ## Usage
 
-__EXPLAIN USAGE HERE__
+Require Visualizer component.
 
 ```
 var Visualizer = require('react-audio-visualizer');
@@ -40,7 +40,16 @@ var Visualizer = require('react-audio-visualizer');
 
 ### Properties
 
-* __DOCUMENT PROPERTIES HERE__
+| Name        | Type      | Required | Description
+| ----------- |:---------:|:--------:| -------------
+| model       | Object    | Yes      | Model is the only required property. It needs to have `path`, `author` & `title` properties.
+| options     | Object    | No       | Set custom styling for default rendering function, properties below.
+| className   | String    | No       | Modifier CSS class that will be set on visualizer's container element.
+| extensions  | Object    | No       | Decorator functions for overriding default rendering functions, properties below.
+| width       | String    | No       | Inline canvas width.
+| height      | String    | No       | Inline canvas height.
+| onChange    | Function  | No       | Callback function when play state changes.
+
 
 ### Notes
 

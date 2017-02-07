@@ -6,6 +6,8 @@ React component for audio visualization using Web Audio API.
 
 ## Demo & Examples
 
+Example of a live app is inside _example_ directory.
+
 Live demo: [DavidLazic.github.io/react-audio-visualizer](http://DavidLazic.github.io/react-audio-visualizer/)
 
 To build the examples locally, run:
@@ -36,7 +38,7 @@ Require Visualizer component.
 ```javascript
 const Visualizer = require('react-audio-visualizer');
 
-<Visualizer>Example</Visualizer>
+<Visualizer model={ <model> }/></>
 ```
 
 ### Properties

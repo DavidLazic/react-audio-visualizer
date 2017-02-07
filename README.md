@@ -39,7 +39,7 @@ Require Visualizer component.
 ```javascript
 const Visualizer = require('react-audio-visualizer');
 
-<Visualizer model={ <model> }/></>
+<Visualizer model={ <model> } />
 ```
 
 ### Properties

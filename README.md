@@ -1,6 +1,7 @@
 # Visualizer
 
 React component for audio visualization using Web Audio API.
+ES6 compatibility.
 
 ![visualizer](/screenshots/visualizer.png "visualizer")
 

@@ -2,6 +2,7 @@
 
 React component for audio visualization using Web Audio API.
 
+![visualizer](/screenshots/visualizer.png "visualizer")
 
 ## Demo & Examples
 

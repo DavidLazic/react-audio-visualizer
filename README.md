@@ -108,6 +108,12 @@ Base Visualizer properties.
 
 To build, watch and serve the examples (which will also watch the component source), run `npm start`. If you just want to watch changes to `src` and rebuild `lib`, run `npm run watch` (this is useful if you are working with `npm link`).
 
+
+## Contributing
+
+This project is an upgrade from my original experiment with Web Audio API written in vanilla JS. It's open for contributions, so, if you think something can be improved or you'd like a new feature, please submit a PR or we can discuss it via email also.
+
+
 ## License
 
 MIT License

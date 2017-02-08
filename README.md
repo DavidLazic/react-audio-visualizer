@@ -3,6 +3,8 @@
 React component for audio visualization using Web Audio API.
 ES6 compatibility.
 
+[NPM Download Stats](https://nodei.co/npm/react-audio-visualizer.png?downloads=true)](https://www.npmjs.com/package/react-audio-visualizer)
+
 ![visualizer](/screenshots/visualizer.png "visualizer")
 
 ## Demo & Examples

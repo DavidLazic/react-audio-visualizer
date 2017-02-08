@@ -105,7 +105,7 @@ const Visualizer = React.createClass({
   * @private
   */
   _onDisplayError (error) {
-    return window.console.error(error);
+    return window.console.table(error);
   },
 
   /**

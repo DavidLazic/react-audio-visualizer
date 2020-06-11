@@ -3,10 +3,13 @@ import React from 'react'
 import { ExampleComponent } from 'react-audio-visualizer'
 import 'react-audio-visualizer/dist/index.css'
 
+import addOne from './add_One.mp3'
+import addTwo from './add_two.mp3'
+
 const DATA = [
   {
     model: {
-      path: './audio_one.mp3',
+      path: addOne,
       author: 'Galimatias & Joppe',
       title: 'Mintaka'
     },
@@ -14,7 +17,7 @@ const DATA = [
   },
   {
     model: {
-      path: './audio_two.mp3',
+      path: addTwo,
       author: 'NCT',
       title: 'Rain Beyond The Sun'
     },

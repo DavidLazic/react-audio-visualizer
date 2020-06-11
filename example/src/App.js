@@ -3,15 +3,15 @@ import React from 'react'
 import Visualizer from 'react-audio-visualizer'
 import 'react-audio-visualizer/dist/index.css'
 
-import addOne from './add_One.mp3'
-import addTwo from './add_two.mp3'
+import audioOne from './audio_one.mp3'
+import audioTwo from './audio_two.mp3'
 
 var createReactClass = require('create-react-class')
 
 const DATA = [
   {
     model: {
-      path: addOne,
+      path: audioOne,
       author: 'Galimatias & Joppe',
       title: 'Mintaka'
     },
@@ -19,7 +19,7 @@ const DATA = [
   },
   {
     model: {
-      path: addTwo,
+      path: audioTwo,
       author: 'NCT',
       title: 'Rain Beyond The Sun'
     },

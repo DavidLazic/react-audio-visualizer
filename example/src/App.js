@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ExampleComponent } from 'react-audio-visualizer'
+import Visualizer from 'react-audio-visualizer'
 import 'react-audio-visualizer/dist/index.css'
 
 import addOne from './add_One.mp3'

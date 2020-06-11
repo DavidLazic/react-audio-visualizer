@@ -1,5 +1,5 @@
-.publish/*
-dist/*
-example/dist/*
-lib/*
-node_modules/*
+build/
+dist/
+node_modules/
+.snapshots/
+*.min.js

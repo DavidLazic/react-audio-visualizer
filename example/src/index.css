@@ -12,3 +12,61 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-size: 14px;
+  background: #000;
+  color: #fff;
+}
+h3,
+h4 {
+  padding-left: 15px;
+}
+h4 a,
+h4 a:visited {
+  color: #305352;
+}
+.main {
+  padding-top: 50px;
+}
+.visualizer {
+  position: relative;
+  width: 100%;
+  background: -webkit-gradient(radial, center center, 0, center center, 460, from(#396362), to(#000000));
+  background: -webkit-radial-gradient(circle, #396362, #000000);
+  background: -moz-radial-gradient(circle, #396362, #000000);
+  background: -ms-radial-gradient(circle, #396362, #000000);
+  box-shadow: inset 0 0 160px 0 #000;
+  cursor: pointer;
+}
+.visualizer__canvas {
+  display: block;
+  margin: 0 auto;
+}
+ul {
+  display: block;
+  margin: 140px auto 0;
+  padding: 0;
+  width: 400px;
+  list-style-type: none;
+  background: #142222;
+}
+ul li {
+  padding: 15px;
+  transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  cursor: pointer;
+}
+ul li:hover {
+  background: #305352;
+}
+@media screen and (min-width: 420px) {
+  .visualizer {
+    box-shadow: inset 0 0 200px 60px #000;
+  }
+}

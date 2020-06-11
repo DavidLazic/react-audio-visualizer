@@ -6,6 +6,8 @@ import 'react-audio-visualizer/dist/index.css'
 import addOne from './add_One.mp3'
 import addTwo from './add_two.mp3'
 
+var createReactClass = require('create-react-class')
+
 const DATA = [
   {
     model: {
@@ -26,7 +28,7 @@ const DATA = [
   }
 ];
 
-const App = React.createClass({
+const App = createReactClass({
 
   getInitialState () {
     return { item: DATA[0] };

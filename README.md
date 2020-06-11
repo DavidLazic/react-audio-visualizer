@@ -23,26 +23,27 @@ npm start
 Then open [`localhost:8000`](http://localhost:8000) in a browser.
 
 
-## Installation
+## Install
 
-The easiest way to use react-audio-visualizer is to install it from NPM and include it in your own React build process (using [Browserify](http://browserify.org), [Webpack](http://webpack.github.io/), etc).
-
-You can also use the standalone build by including `dist/react-audio-visualizer.js` in your page. If you use this, make sure you have already included React, and it is available as a global variable.
-
+```bash
+npm install --save react-audio-visualizer
 ```
-npm install react-audio-visualizer --save
-```
-
 
 ## Usage
 
-Require Visualizer component.
+```jsx
+import React, { Component } from 'react'
 
-```javascript
-const Visualizer = require('react-audio-visualizer');
+import Visualizer from 'react-audio-visualizer'
+import 'react-audio-visualizer/dist/index.css'
 
-<Visualizer model={ <model> } />
+class Example extends Component {
+  render() {
+    return <Visualizer />
+  }
+}
 ```
+
 
 ### Properties
 
@@ -140,33 +141,4 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-# react-audio-visualizer
 
-> Canvas audio visualization using Web Audio API
-
-[![NPM](https://img.shields.io/npm/v/react-audio-visualizer.svg)](https://www.npmjs.com/package/react-audio-visualizer) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
-## Install
-
-```bash
-npm install --save react-audio-visualizer
-```
-
-## Usage
-
-```jsx
-import React, { Component } from 'react'
-
-import MyComponent from 'react-audio-visualizer'
-import 'react-audio-visualizer/dist/index.css'
-
-class Example extends Component {
-  render() {
-    return <MyComponent />
-  }
-}
-```
-
-## License
-
-MIT © [DavidLazic ](https://github.com/DavidLazic )

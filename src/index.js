@@ -1,4 +1,7 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+
+var createReactClass = require('create-react-class');
 
 const STATES = [
   'ENDED',
@@ -23,7 +26,7 @@ const OPTIONS_DEFAULT = {
   font: ['12px', 'Helvetica']
 };
 
-const Visualizer = React.createClass({
+const Visualizer = createReactClass({
 
   getInitialState () {
     return {
